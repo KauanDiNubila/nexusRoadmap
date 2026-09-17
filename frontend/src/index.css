@@ -1,0 +1,145 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
+
+  /* surfaces */
+  --color-void: #07080c;
+  --color-abyss: #0a0c12;
+  --color-surface: #0e1119;
+  --color-surface-2: #131722;
+  --color-surface-3: #191e2c;
+  --color-border: #232838;
+  --color-border-soft: #1a1f2c;
+
+  /* text */
+  --color-ink-0: #f4f6fb;
+  --color-ink-1: #c4cad9;
+  --color-ink-2: #8a90a6;
+  --color-ink-3: #565d73;
+
+  /* accents */
+  --color-cyan: #3ee1ff;
+  --color-cyan-dim: #1d6b7d;
+  --color-violet: #9b8cff;
+  --color-violet-dim: #4a4380;
+  --color-emerald: #46e0a8;
+  --color-emerald-dim: #1f6b52;
+  --color-amber: #ffb454;
+  --color-amber-dim: #8a5f28;
+  --color-rose: #ff6b8b;
+  --color-rose-dim: #833c50;
+  --color-ember: #ff8a5b;
+  --color-ember-dim: #86492c;
+  --color-sky: #6bb8ff;
+  --color-sky-dim: #33608c;
+  --color-teal: #3fd6c4;
+  --color-teal-dim: #1f6c62;
+  --color-indigo: #8892ff;
+  --color-indigo-dim: #454b8f;
+  --color-gold: #f0cf6b;
+  --color-gold-dim: #7d6b2e;
+
+  --animate-pulse-slow: pulse-slow 3.2s ease-in-out infinite;
+  --animate-dash: dash 1.4s linear infinite;
+  --animate-shimmer: shimmer 2.2s ease-in-out infinite;
+}
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
+@keyframes dash {
+  to { stroke-dashoffset: -24; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  background: var(--color-void);
+  color: var(--color-ink-0);
+  font-family: var(--font-sans);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: rgba(62, 225, 255, 0.25);
+  color: #fff;
+}
+
+/* thin technical scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 4px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--color-ink-3);
+}
+
+.nexus-canvas-bg {
+  background-color: var(--color-void);
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.05) 1px, transparent 0);
+  background-size: 28px 28px;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* React Flow overrides — strip default chrome, keep it minimal/technical */
+.react-flow__attribution {
+  display: none;
+}
+.react-flow__edge-path {
+  stroke-linecap: round;
+}
+.react-flow__handle {
+  opacity: 0;
+}
+.react-flow__node {
+  cursor: pointer;
+}
+.react-flow__controls {
+  box-shadow: none;
+  background: transparent;
+  display: flex;
+  gap: 6px;
+}
+.react-flow__controls-button {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  width: 30px;
+  height: 30px;
+  color: var(--color-ink-1);
+  transition: all 0.15s ease;
+}
+.react-flow__controls-button:hover {
+  background: var(--color-surface-3);
+  color: var(--color-ink-0);
+  border-color: var(--color-ink-3);
+}
+.react-flow__controls-button svg {
+  fill: currentColor;
+  max-width: 12px;
+  max-height: 12px;
+}
