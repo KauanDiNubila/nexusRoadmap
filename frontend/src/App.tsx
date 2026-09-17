@@ -9,7 +9,22 @@ import { StatsPage } from "@/pages/StatsPage";
 
 function AppShell() {
   const [view, setView] = useState<ViewKey>("roadmap");
-  const { isLoading } = useRoadmap();
+  const { isLoading, loadError, retryLoad } = useRoadmap();
+
+  if (loadError) {
+    return (
+      <div className="flex h-screen w-screen flex-col items-center justify-center gap-4 px-6 text-center" style={{ background: "var(--color-void)" }}>
+        <p className="font-mono text-sm" style={{ color: "var(--color-ink-3)" }}>{loadError}</p>
+        <button
+          onClick={retryLoad}
+          className="rounded-md border px-4 py-2 font-mono text-xs uppercase tracking-widest transition-colors hover:opacity-80"
+          style={{ borderColor: "var(--color-border)", color: "var(--color-ink-0)" }}
+        >
+          Tentar de novo
+        </button>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (

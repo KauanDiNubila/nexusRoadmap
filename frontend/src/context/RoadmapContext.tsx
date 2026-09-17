@@ -23,6 +23,8 @@ export interface Toast {
 
 interface RoadmapContextValue {
   isLoading: boolean;
+  loadError: string | null;
+  retryLoad: () => void;
   categories: CategoryDef[];
   techs: TechDef[];
   techsById: Map<string, TechDef>;
@@ -73,6 +75,8 @@ let toastSeq = 0;
 
 export function RoadmapProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [reloadToken, setReloadToken] = useState(0);
   const [techs, setTechs] = useState<TechDef[]>(cloneTechs);
   const [selectedTechId, setSelectedTechId] = useState<string | null>(null);
   const [activeCourse, setActiveCourse] = useState<ActiveCourseRef | null>(null);
@@ -87,30 +91,42 @@ export function RoadmapProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let cancelled = false;
+    setIsLoading(true);
+    setLoadError(null);
 
-    fetchSnapshot().then((snapshot) => {
-      if (cancelled) return;
+    fetchSnapshot()
+      .then((snapshot) => {
+        if (cancelled) return;
 
-      setUserProgress(snapshot.usuario);
-      setAchievements(snapshot.conquistas.map(paraAchievement));
+        setUserProgress(snapshot.usuario);
+        setAchievements(snapshot.conquistas.map(paraAchievement));
 
-      const progressoPorCurso = new Map(snapshot.cursos.map((c) => [c.cursoId, c]));
-      setTechs((prev) =>
-        prev.map((t) => ({
-          ...t,
-          courses: t.courses.map((c) => {
-            const progresso = progressoPorCurso.get(c.id);
-            return progresso ? { ...c, status: progresso.status, studiedMinutes: progresso.studiedMinutes } : c;
-          }),
-        })),
-      );
+        const progressoPorCurso = new Map(snapshot.cursos.map((c) => [c.cursoId, c]));
+        setTechs((prev) =>
+          prev.map((t) => ({
+            ...t,
+            courses: t.courses.map((c) => {
+              const progresso = progressoPorCurso.get(c.id);
+              return progresso ? { ...c, status: progresso.status, studiedMinutes: progresso.studiedMinutes } : c;
+            }),
+          })),
+        );
 
-      setIsLoading(false);
-    });
+        setIsLoading(false);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setLoadError("Não foi possível carregar o progresso. Confira se a API está rodando.");
+        setIsLoading(false);
+      });
 
     return () => {
       cancelled = true;
     };
+  }, [reloadToken]);
+
+  const retryLoad = useCallback(() => {
+    setReloadToken((n) => n + 1);
   }, []);
 
   const pushToast = useCallback((toast: Omit<Toast, "id">) => {
@@ -285,6 +301,8 @@ export function RoadmapProvider({ children }: { children: ReactNode }) {
 
   const value: RoadmapContextValue = {
     isLoading,
+    loadError,
+    retryLoad,
     categories: CATEGORIES,
     techs,
     techsById,
